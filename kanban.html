@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quadro Kanban</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #2F4F4F
+      ;
+    }
+    h2 { text-align: center; }
+    .kanban-board {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+    }
+    .column {
+      width: 30%;
+      padding: 10px;
+      border-radius: 10px;
+      min-height: 400px;
+    }
+    .nao-iniciado { background-color: #e0e0e0; }
+    .iniciado { background-color: #d0d0d0; }
+    .em-andamento { background-color: #cce4ff; }
+    .finalizado { background-color: #c8f7c5; }
+
+    .task {
+      background: white;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      cursor: grab;
+    }
+
+    .column h3 {
+      text-align: center;
+    }
+
+    form {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+      gap: 10px;
+    }
+
+    input[type="text"] {
+      padding: 8px;
+      width: 250px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 8px 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h2>Quadro Kanban - Organize suas Tarefas</h2>
+  <form id="taskForm">
+    <input type="text" id="taskInput" placeholder="Digite o nome da tarefa..." required />
+    <button type="submit">Adicionar Tarefa</button>
+  </form>
+
+  <div class="kanban-board">
+    <div class="column nao-iniciado" ondrop="drop(event)" ondragover="allowDrop(event)" id="nao-iniciado">
+      <h3>Não Iniciado</h3>
+    </div>
+    <div class="column em-andamento" ondrop="drop(event)" ondragover="allowDrop(event)" id="iniciado">
+      <h3>Iniciado</h3>
+    </div>
+    <div class="column finalizado" ondrop="drop(event)" ondragover="allowDrop(event)" id="finalizado">
+      <h3>Finalizado</h3>
+    </div>
+  </div>
+
+  <script>
+    let taskId = 0;
+
+    document.getElementById("taskForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const input = document.getElementById("taskInput");
+      const taskText = input.value.trim();
+      if (taskText !== "") {
+        const task = document.createElement("div");
+        task.className = "task";
+        task.textContent = taskText;
+        task.id = "task-" + taskId++;
+        task.draggable = true;
+        task.ondragstart = drag;
+
+        document.getElementById("nao-iniciado").appendChild(task);
+        input.value = "";
+      }
+    });
+
+    function allowDrop(ev) {
+      ev.preventDefault();
+    }
+
+    function drag(ev) {
+      ev.dataTransfer.setData("text", ev.target.id);
+    }
+
+    function drop(ev) {
+      ev.preventDefault();
+      const data = ev.dataTransfer.getData("text");
+      const task = document.getElementById(data);
+      ev.target.appendChild(task);
+    }
+  </script>
+</body>
+</html>
